@@ -85,9 +85,13 @@ function GameRoom() {
           setPlayer(socket.id || null, name, response.isHost || false)
           setupSocketListeners()
         } else {
-          setError(response.error || 'Kunde inte gå med i spelet')
-          setShowNamePrompt(true)  // Show name prompt so user can try again
-          setNameInput(name)  // Pre-fill with the name they tried
+          const errorMsg = response.error || 'Kunde inte gå med i spelet'
+          setError(errorMsg)
+          // Only show name prompt for errors that can be fixed by changing name
+          if (errorMsg !== 'Spelet hittades inte' && errorMsg !== 'Spelet är avslutat') {
+            setShowNamePrompt(true)
+            setNameInput(name)
+          }
         }
         setIsJoining(false)
       })
@@ -252,6 +256,17 @@ function GameRoom() {
     )
   }
 
+  // Game not found or ended screen
+  if (error && (error === 'Spelet hittades inte' || error === 'Spelet är avslutat')) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-4">
+        <div className="text-center">
+          <p className="text-gray-600 text-lg">{error}</p>
+        </div>
+      </div>
+    )
+  }
+
 
   if (!game) return null
 
@@ -327,10 +342,10 @@ function GameRoom() {
                 <div
                   key={index}
                   className={`w-12 h-12 flex items-center justify-center text-2xl font-bold
-                           rounded-lg ${
+                           rounded-lg border border-gray-200 ${
                              isPlaying
-                               ? 'bg-gray-900 text-white'
-                               : 'bg-gray-100 text-gray-400 border border-gray-200'
+                               ? 'bg-gray-100 text-gray-700'
+                               : 'bg-gray-100 text-gray-400'
                            }`}
                 >
                   {letter}
