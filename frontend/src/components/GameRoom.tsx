@@ -205,7 +205,7 @@ function GameRoom() {
         <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-sm border border-gray-200">
           <h2 className="text-xl font-bold text-gray-800 mb-4">Ange ditt namn</h2>
           {error && (
-            <div className="bg-red-50 border border-red-300 text-red-700 px-4 py-3 rounded-lg mb-4">
+            <div className="bg-gray-100 border border-gray-400 text-gray-700 px-4 py-3 rounded-lg mb-4">
               {error}
             </div>
           )}
@@ -222,11 +222,11 @@ function GameRoom() {
               autoFocus
               className="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg
                        text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2
-                       focus:ring-primary-500 mb-4"
+                       focus:ring-gray-400 mb-4"
             />
             <button
               type="submit"
-              className="w-full py-3 bg-primary-600 hover:bg-primary-700 text-white
+              className="w-full py-3 bg-gray-900 hover:bg-gray-800 text-white
                        font-medium rounded-lg transition-colors"
             >
               Gå med i spel
@@ -242,7 +242,7 @@ function GameRoom() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <svg className="animate-spin h-12 w-12 mx-auto mb-4 text-primary-600" viewBox="0 0 24 24">
+          <svg className="animate-spin h-12 w-12 mx-auto mb-4 text-gray-600" viewBox="0 0 24 24">
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
           </svg>
@@ -263,11 +263,11 @@ function GameRoom() {
       {/* Header */}
       <header className="flex flex-wrap items-center justify-between gap-4 mb-4">
         <div>
-          <h1 className="text-2xl font-bold text-primary-600">WrdHntr</h1>
+          <h1 className="text-2xl font-bold text-gray-900">WrdHntr</h1>
           <div className="flex items-center gap-2 text-sm text-gray-500">
             <span>Spel: {game.id}</span>
             <span>|</span>
-            <span className={game.mode === 'exclusive' ? 'text-success-600' : 'text-primary-600'}>
+            <span className="text-gray-700">
               {game.mode === 'exclusive' ? 'Exclusive' : 'Free-for-all'}
             </span>
           </div>
@@ -289,10 +289,10 @@ function GameRoom() {
           >
             {copied ? (
               <>
-                <svg className="w-4 h-4 text-success-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                <span className="text-success-600">Kopierad!</span>
+                <span className="text-gray-700">Kopierad!</span>
               </>
             ) : (
               <>
@@ -308,7 +308,7 @@ function GameRoom() {
 
       {/* Error Toast */}
       {error && (
-        <div className="bg-red-50 border border-red-300 text-red-700 px-4 py-2 rounded-lg mb-4">
+        <div className="bg-gray-100 border border-gray-400 text-gray-700 px-4 py-2 rounded-lg mb-4">
           {error}
         </div>
       )}
@@ -329,7 +329,7 @@ function GameRoom() {
                   className={`w-12 h-12 flex items-center justify-center text-2xl font-bold
                            rounded-lg ${
                              isPlaying
-                               ? 'bg-primary-600 text-white'
+                               ? 'bg-gray-900 text-white'
                                : 'bg-gray-100 text-gray-400 border border-gray-200'
                            }`}
                 >
@@ -355,14 +355,14 @@ function GameRoom() {
                            text-gray-800 placeholder-gray-400 focus:outline-none transition-colors
                            ${lastSubmitResult
                              ? lastSubmitResult.success
-                               ? 'border-success-500 flash-success'
+                               ? 'border-gray-900 flash-success'
                                : 'border-red-500 shake'
-                             : 'border-gray-300 focus:border-primary-500'
+                             : 'border-gray-300 focus:border-gray-500'
                            }`}
                 />
                 <button
                   type="submit"
-                  className="px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white
+                  className="px-6 py-3 bg-gray-900 hover:bg-gray-800 text-white
                            font-medium rounded-lg transition-colors"
                 >
                   Skicka
@@ -372,7 +372,7 @@ function GameRoom() {
               {/* Submit Result Feedback */}
               {lastSubmitResult && (
                 <div className={`mt-2 text-sm ${
-                  lastSubmitResult.success ? 'text-success-600' : 'text-red-600'
+                  lastSubmitResult.success ? 'text-gray-700' : 'text-red-600'
                 }`}>
                   {lastSubmitResult.success
                     ? `+${lastSubmitResult.score} poäng för "${lastSubmitResult.word}"`
@@ -389,15 +389,20 @@ function GameRoom() {
               <h3 className="text-lg font-medium text-gray-800 mb-4">
                 Väntar på spelare...
               </h3>
-              <p className="text-gray-500 mb-4">
+              <p className="text-gray-500 mb-2">
                 Minst {game.minWordLength} bokstäver krävs per ord
+              </p>
+              <p className="text-gray-400 text-sm mb-4">
+                {game.mode === 'freeforall'
+                  ? 'Poäng = ordlängd × tid kvar (bonus +5 för ord över 6 bokstäver)'
+                  : 'Poäng = 1 poäng per bokstav (endast första som tar ordet får poäng)'}
               </p>
 
               {isHost ? (
                 <button
                   onClick={handleStartGame}
                   disabled={isStarting || game.players.length < 1}
-                  className="px-8 py-4 bg-success-600 hover:bg-success-700 disabled:bg-gray-300
+                  className="px-8 py-4 bg-gray-900 hover:bg-gray-800 disabled:bg-gray-300
                            disabled:cursor-not-allowed text-white text-lg font-medium rounded-lg
                            transition-colors"
                 >
@@ -448,16 +453,16 @@ function GameRoom() {
                   key={player.id}
                   className={`flex items-center justify-between p-3 rounded-lg ${
                     player.id === playerId
-                      ? 'bg-primary-50 border border-primary-200'
+                      ? 'bg-gray-100 border border-gray-300'
                       : 'bg-gray-50 border border-gray-100'
                   }`}
                 >
                   <div className="flex items-center gap-3">
                     <span className={`w-6 h-6 flex items-center justify-center rounded-full
                                    text-sm font-bold ${
-                      index === 0 ? 'bg-yellow-400 text-yellow-900' :
-                      index === 1 ? 'bg-gray-300 text-gray-700' :
-                      index === 2 ? 'bg-amber-500 text-amber-900' :
+                      index === 0 ? 'bg-gray-900 text-white' :
+                      index === 1 ? 'bg-gray-600 text-white' :
+                      index === 2 ? 'bg-gray-400 text-white' :
                       'bg-gray-200 text-gray-600'
                     }`}>
                       {index + 1}
@@ -466,7 +471,7 @@ function GameRoom() {
                       <div className="font-medium text-gray-800 flex items-center gap-2">
                         {player.name}
                         {player.id === game.hostId && (
-                          <span className="text-xs bg-primary-100 text-primary-700 px-1.5 py-0.5 rounded">
+                          <span className="text-xs bg-gray-200 text-gray-700 px-1.5 py-0.5 rounded">
                             Värd
                           </span>
                         )}

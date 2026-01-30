@@ -55,8 +55,7 @@ function Home() {
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
-          <h1 className="text-5xl font-bold text-primary-600 mb-2">WrdHntr</h1>
-          <p className="text-gray-500">Svenskt ordspel i realtid</p>
+          <h1 className="text-5xl font-bold text-gray-900">WrdHntr</h1>
         </div>
 
         {/* Player Name */}
@@ -72,13 +71,13 @@ function Home() {
             maxLength={20}
             className="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg
                      text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2
-                     focus:ring-primary-500 focus:border-transparent"
+                     focus:ring-gray-400 focus:border-transparent"
           />
         </div>
 
         {/* Error Message */}
         {error && (
-          <div className="bg-red-50 border border-red-300 text-red-700 px-4 py-3 rounded-lg mb-4">
+          <div className="bg-gray-100 border border-gray-400 text-gray-700 px-4 py-3 rounded-lg mb-4">
             {error}
           </div>
         )}
@@ -97,7 +96,7 @@ function Home() {
                 onClick={() => setMode('freeforall')}
                 className={`px-4 py-3 rounded-lg border-2 transition-all ${
                   mode === 'freeforall'
-                    ? 'border-primary-500 bg-primary-50 text-primary-700'
+                    ? 'border-gray-900 bg-gray-900 text-white'
                     : 'border-gray-200 bg-gray-50 text-gray-600 hover:border-gray-300'
                 }`}
               >
@@ -108,7 +107,7 @@ function Home() {
                 onClick={() => setMode('exclusive')}
                 className={`px-4 py-3 rounded-lg border-2 transition-all ${
                   mode === 'exclusive'
-                    ? 'border-success-500 bg-success-50 text-success-700'
+                    ? 'border-gray-900 bg-gray-900 text-white'
                     : 'border-gray-200 bg-gray-50 text-gray-600 hover:border-gray-300'
                 }`}
               >
@@ -130,7 +129,7 @@ function Home() {
               value={letterCount}
               onChange={(e) => setLetterCount(Number(e.target.value))}
               className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer
-                       accent-primary-500"
+                       accent-gray-900"
             />
             <div className="flex justify-between text-xs text-gray-500 mt-1">
               <span>12</span>
@@ -150,7 +149,7 @@ function Home() {
               value={minWordLength}
               onChange={(e) => setMinWordLength(Number(e.target.value))}
               className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer
-                       accent-primary-500"
+                       accent-gray-900"
             />
             <div className="flex justify-between text-xs text-gray-500 mt-1">
               <span>2</span>
@@ -163,7 +162,7 @@ function Home() {
             <button
               onClick={handleCreateGame}
               disabled={isCreating || !playerName.trim()}
-              className="w-full py-3 px-4 bg-primary-600 hover:bg-primary-700 disabled:bg-gray-300
+              className="w-full py-3 px-4 bg-gray-900 hover:bg-gray-800 disabled:bg-gray-300
                        disabled:cursor-not-allowed text-white font-medium rounded-lg
                        transition-colors flex items-center justify-center gap-2"
             >
@@ -188,12 +187,6 @@ function Home() {
               </div>
             )}
           </div>
-        </div>
-
-
-        {/* Footer */}
-        <div className="text-center mt-6 text-gray-500 text-sm">
-          <p>60 sekunder. Oändliga ord. En vinnare.</p>
         </div>
       </div>
     </div>
