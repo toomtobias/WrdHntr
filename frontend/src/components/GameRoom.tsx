@@ -217,11 +217,6 @@ function GameRoom() {
       <div className="min-h-screen flex items-center justify-center p-4">
         <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-sm border border-gray-200">
           <h2 className="text-xl font-bold text-gray-800 mb-4">Ange ditt namn</h2>
-          {error && (
-            <div className="bg-gray-100 border border-gray-400 text-gray-700 px-4 py-3 rounded-lg mb-4">
-              {error}
-            </div>
-          )}
           <form onSubmit={handleNameSubmit}>
             <input
               type="text"
@@ -233,13 +228,18 @@ function GameRoom() {
               placeholder="Ditt namn..."
               maxLength={20}
               autoFocus
-              className="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg
-                       text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2
-                       focus:ring-gray-400 mb-4"
+              className={`w-full px-4 py-3 bg-gray-50 border-2 rounded-lg
+                       text-gray-800 placeholder-gray-400 focus:outline-none transition-colors
+                       ${error ? 'border-red-500' : 'border-gray-300 focus:border-gray-500'}`}
             />
+            {error && (
+              <div className="mt-2 text-sm text-red-600">
+                {error}
+              </div>
+            )}
             <button
               type="submit"
-              className="w-full py-3 bg-gray-900 hover:bg-gray-800 text-white
+              className="w-full py-3 mt-4 bg-gray-900 hover:bg-gray-800 text-white
                        font-medium rounded-lg transition-colors"
             >
               Gå med i spel
