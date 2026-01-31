@@ -6,6 +6,11 @@
 import express from 'express';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 import {
   loadWordList,
   generateLetters,
@@ -20,8 +25,9 @@ import {
 const app = express();
 const server = createServer(app);
 
-// CORS configuration
-const corsOrigin = process.env.CORS_ORIGIN || 'http://localhost:5173';
+// CORS configuration - allow same origin in production
+const isProduction = process.env.NODE_ENV === 'production';
+const corsOrigin = process.env.CORS_ORIGIN || (isProduction ? true : 'http://localhost:5173');
 
 const io = new Server(server, {
   cors: {
@@ -505,6 +511,15 @@ app.get('/health', (req, res) => {
     wordListSize: getWordListSize(),
     activeGames: games.size
   });
+});
+
+// Serve static files from frontend build
+const frontendPath = path.join(__dirname, '../frontend/dist');
+app.use(express.static(frontendPath));
+
+// SPA fallback - serve index.html for all other routes
+app.get('*', (req, res) => {
+  res.sendFile(path.join(frontendPath, 'index.html'));
 });
 
 // Clean up old games periodically (every 5 minutes)
