@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useLocation, useNavigate, useParams } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { Player, Claim } from '../store/gameStore'
 
 interface LocationState {
@@ -14,7 +14,6 @@ interface LocationState {
 }
 
 function Results() {
-  const { gameId } = useParams<{ gameId: string }>()
   const location = useLocation()
   const navigate = useNavigate()
 
@@ -28,7 +27,7 @@ function Results() {
           <h2 className="text-xl text-gray-800 mb-4">Inget spelresultat hittat</h2>
           <button
             onClick={() => navigate('/')}
-            className="px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white
+            className="px-6 py-3 bg-gray-900 hover:bg-gray-800 text-white
                      font-medium rounded-lg transition-colors"
           >
             Tillbaka till start
@@ -45,16 +44,6 @@ function Results() {
 
   // Get set of claimed words for quick lookup
   const claimedWordsSet = new Set(claims.map(c => c.word.toUpperCase()))
-
-  // Get medal emoji
-  const getMedal = (index: number) => {
-    switch (index) {
-      case 0: return '🥇'
-      case 1: return '🥈'
-      case 2: return '🥉'
-      default: return `#${index + 1}`
-    }
-  }
 
   // Group claims by player
   const claimsByPlayer = claims.reduce((acc, claim) => {
@@ -87,30 +76,35 @@ function Results() {
       {/* Final Rankings */}
       <div className="bg-white rounded-lg p-6 mb-6 shadow-sm border border-gray-200">
         <h3 className="text-lg font-semibold text-gray-800 mb-4">Slutresultat</h3>
-        <div className="space-y-3">
+        <div className="space-y-2">
           {rankings.map((player, index) => (
             <div
               key={player.id}
-              className={`flex items-center justify-between p-4 rounded-lg ${
+              className={`flex items-center justify-between p-3 rounded-lg ${
                 index === 0
-                  ? 'bg-yellow-50 border border-yellow-200'
-                  : index === 1
-                  ? 'bg-gray-100 border border-gray-200'
-                  : index === 2
-                  ? 'bg-amber-50 border border-amber-200'
+                  ? 'bg-gray-100 border border-gray-300'
                   : 'bg-gray-50 border border-gray-100'
               }`}
             >
-              <div className="flex items-center gap-4">
-                <span className="text-2xl">{getMedal(index)}</span>
-                <div>
-                  <div className="font-semibold text-gray-800 text-lg">{player.name}</div>
-                  <div className="text-sm text-gray-500">
-                    {claimsByPlayer[player.id]?.length || 0} ord
-                  </div>
-                </div>
+              <div className="flex items-center gap-3">
+                <span className={`w-6 h-6 flex items-center justify-center rounded-full
+                               text-sm font-bold ${
+                  index === 0 ? 'bg-gray-900 text-white' :
+                  index === 1 ? 'bg-gray-600 text-white' :
+                  index === 2 ? 'bg-gray-400 text-white' :
+                  'bg-gray-200 text-gray-600'
+                }`}>
+                  {index + 1}
+                </span>
+                <span className="font-semibold text-gray-800">{player.name}</span>
+                <span className="text-xs bg-gray-200 text-gray-600 px-2 py-0.5 rounded-full">
+                  {claimsByPlayer[player.id]?.length || 0} ord
+                </span>
+                <span className="text-xs bg-gray-200 text-gray-600 px-2 py-0.5 rounded-full">
+                  {claimsByPlayer[player.id]?.reduce((sum, c) => sum + c.word.length, 0) || 0} bokstäver
+                </span>
               </div>
-              <div className="text-3xl font-bold text-gray-800">
+              <div className="text-2xl font-bold text-gray-800">
                 {player.score}
               </div>
             </div>
@@ -184,14 +178,16 @@ function Results() {
             ({Math.round((claims.length / possibleWords.length) * 100)}%)
           </p>
           <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2 max-h-64 overflow-y-auto">
-            {possibleWords.map((word, index) => {
+            {[...possibleWords]
+              .sort((a, b) => a.length - b.length || a.localeCompare(b, 'sv'))
+              .map((word, index) => {
               const wasClaimed = claimedWordsSet.has(word.toUpperCase())
               return (
                 <div
                   key={index}
                   className={`px-2 py-1 rounded text-sm font-mono text-center ${
                     wasClaimed
-                      ? 'bg-success-100 text-success-700 border border-success-300'
+                      ? 'bg-gray-800 text-white border border-gray-700'
                       : 'bg-gray-50 text-gray-500 border border-gray-100'
                   }`}
                 >
@@ -223,7 +219,7 @@ function Results() {
       <div className="flex justify-center">
         <button
           onClick={() => navigate('/')}
-          className="px-8 py-4 bg-primary-600 hover:bg-primary-700 text-white
+          className="px-8 py-4 bg-gray-900 hover:bg-gray-800 text-white
                    font-medium rounded-lg transition-colors"
         >
           Skapa nytt spel
