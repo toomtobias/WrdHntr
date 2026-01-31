@@ -96,6 +96,11 @@ function Results() {
                 }`}>
                   {index + 1}
                 </span>
+                <img
+                  src={`https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(player.name)}`}
+                  alt=""
+                  className="w-8 h-8 rounded-full bg-gray-100"
+                />
                 <span className="font-semibold text-gray-800">{player.name}</span>
                 <span className="text-xs bg-gray-200 text-gray-600 px-2 py-0.5 rounded-full">
                   {claimsByPlayer[player.id]?.length || 0} ord

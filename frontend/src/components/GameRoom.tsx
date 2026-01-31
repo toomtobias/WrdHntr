@@ -494,6 +494,11 @@ function GameRoom() {
                     }`}>
                       {index + 1}
                     </span>
+                    <img
+                      src={`https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(player.name)}`}
+                      alt=""
+                      className="w-8 h-8 rounded-full bg-gray-100"
+                    />
                     <div>
                       <div className="font-medium text-gray-800 flex items-center gap-2">
                         {player.name}
