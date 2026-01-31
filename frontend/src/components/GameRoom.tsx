@@ -2,6 +2,7 @@ import { useEffect, useState, useRef, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { socket, connectSocket } from '../socket'
 import { useGameStore, Player, Claim, GameState } from '../store/gameStore'
+import { playCountdownBeep, playGameOver } from '../utils/sounds'
 
 interface JoinGameResponse {
   success: boolean
@@ -42,6 +43,7 @@ function GameRoom() {
   const [showNamePrompt, setShowNamePrompt] = useState(false)
   const [isStarting, setIsStarting] = useState(false)
   const [copied, setCopied] = useState(false)
+  const lastBeepTimeRef = useRef<number>(-1)
 
   // Join game on mount
   useEffect(() => {
@@ -118,6 +120,12 @@ function GameRoom() {
 
     socket.on('timer-update', ({ remaining }: { remaining: number }) => {
       updateTimeRemaining(remaining)
+
+      // Play countdown beep in final 10 seconds
+      if (remaining <= 10 && remaining > 0 && remaining !== lastBeepTimeRef.current) {
+        lastBeepTimeRef.current = remaining
+        playCountdownBeep(remaining)
+      }
     })
 
     socket.on('word-claimed', ({ word, playerId: claimerId, playerName: claimerName, score, timestamp, players }: {
@@ -144,6 +152,7 @@ function GameRoom() {
       possibleWords: string[]
     }) => {
       updateGameStatus('ended')
+      playGameOver()
       // Navigate to results
       setTimeout(() => {
         navigate(`/results/${gameId}`, { state: { rankings, claims, game: gameInfo, possibleWords } })
