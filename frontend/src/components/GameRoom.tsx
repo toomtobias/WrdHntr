@@ -484,26 +484,17 @@ function GameRoom() {
                       : 'bg-gray-50 border border-gray-100'
                   }`}
                 >
-                  <div className="flex items-center gap-3">
-                    <span className={`w-6 h-6 flex items-center justify-center rounded-full
-                                   text-sm font-bold ${
-                      index === 0 ? 'bg-gray-900 text-white' :
-                      index === 1 ? 'bg-gray-600 text-white' :
-                      index === 2 ? 'bg-gray-400 text-white' :
-                      'bg-gray-200 text-gray-600'
-                    }`}>
-                      {index + 1}
-                    </span>
+                  <div className="flex items-center gap-3 min-w-0">
                     <img
                       src={`https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(player.name)}`}
                       alt=""
-                      className="w-8 h-8 rounded-full bg-gray-100"
+                      className="w-8 h-8 rounded-full bg-gray-100 flex-shrink-0"
                     />
-                    <div>
+                    <div className="min-w-0">
                       <div className="font-medium text-gray-800 flex items-center gap-2">
-                        {player.name}
+                        <span className="truncate">{player.name}</span>
                         {player.id === game.hostId && (
-                          <span className="text-xs bg-gray-200 text-gray-700 px-1.5 py-0.5 rounded">
+                          <span className="text-xs bg-gray-200 text-gray-700 px-1.5 py-0.5 rounded flex-shrink-0">
                             Värd
                           </span>
                         )}
