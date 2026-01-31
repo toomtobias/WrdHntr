@@ -434,22 +434,25 @@ function GameRoom() {
             <h3 className="text-sm font-medium text-gray-500 mb-3">
               {game.mode === 'freeforall' ? 'Dina ord' : 'Tagna ord'} ({game.claims.length})
             </h3>
-            <div className="max-h-48 overflow-y-auto space-y-1">
+            <div className="max-h-48 overflow-y-auto">
               {game.claims.length === 0 ? (
                 <p className="text-gray-400 text-sm">Inga ord ännu...</p>
               ) : (
-                [...game.claims].reverse().map((claim, index) => (
-                  <div
-                    key={`${claim.word}-${claim.playerId}-${index}`}
-                    className="flex items-center justify-between text-sm py-1 px-2
-                             bg-gray-50 rounded border border-gray-100"
-                  >
-                    <span className="font-mono font-medium text-gray-800">{claim.word}</span>
-                    <span className="text-gray-500">
-                      {claim.playerName} • +{claim.score} • {claim.timestamp}s
-                    </span>
-                  </div>
-                ))
+                <div className="flex flex-wrap gap-2">
+                  {[...game.claims].reverse().map((claim, index) => (
+                    <div
+                      key={`${claim.word}-${claim.playerId}-${index}`}
+                      className="inline-flex items-center gap-1.5 px-2 py-1 bg-gray-100
+                               rounded border border-gray-200 text-sm"
+                    >
+                      <span className="font-mono font-medium text-gray-800">{claim.word}</span>
+                      <span className="text-gray-500 text-xs">+{claim.score}</span>
+                      {game.mode === 'exclusive' && (
+                        <span className="text-gray-400 text-xs">{claim.playerName}</span>
+                      )}
+                    </div>
+                  ))}
+                </div>
               )}
             </div>
           </div>

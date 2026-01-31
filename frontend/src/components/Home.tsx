@@ -17,10 +17,17 @@ function Home() {
 
   // Form state
   const [mode, setMode] = useState<GameMode>('freeforall')
-  const [letterCount, setLetterCount] = useState(14)
+  const [letterCount, setLetterCount] = useState(15)
   const [minWordLength, setMinWordLength] = useState(3)
+  const [gameDuration, setGameDuration] = useState(60) // seconds
   const [playerName, setPlayerName] = useState('')
   const [isCreating, setIsCreating] = useState(false)
+
+  const formatDuration = (seconds: number) => {
+    const mins = Math.floor(seconds / 60)
+    const secs = seconds % 60
+    return secs === 0 ? `${mins} min` : `${mins}:${secs.toString().padStart(2, '0')} min`
+  }
 
   const handleCreateGame = async () => {
     setIsCreating(true)
@@ -33,7 +40,8 @@ function Home() {
       socket.emit('create-game', {
         mode,
         letterCount,
-        minWordLength
+        minWordLength,
+        gameDuration
       }, (response: CreateGameResponse) => {
         if (response.success && response.gameId) {
           // Store player name in session storage for the game room
@@ -124,16 +132,16 @@ function Home() {
             </label>
             <input
               type="range"
-              min="12"
-              max="16"
+              min="10"
+              max="20"
               value={letterCount}
               onChange={(e) => setLetterCount(Number(e.target.value))}
               className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer
                        accent-gray-900"
             />
             <div className="flex justify-between text-xs text-gray-500 mt-1">
-              <span>12</span>
-              <span>16</span>
+              <span>10</span>
+              <span>20</span>
             </div>
           </div>
 
@@ -144,7 +152,7 @@ function Home() {
             </label>
             <input
               type="range"
-              min="2"
+              min="3"
               max="5"
               value={minWordLength}
               onChange={(e) => setMinWordLength(Number(e.target.value))}
@@ -152,8 +160,29 @@ function Home() {
                        accent-gray-900"
             />
             <div className="flex justify-between text-xs text-gray-500 mt-1">
-              <span>2</span>
+              <span>3</span>
               <span>5</span>
+            </div>
+          </div>
+
+          {/* Game Duration */}
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Speltid: {formatDuration(gameDuration)}
+            </label>
+            <input
+              type="range"
+              min="60"
+              max="300"
+              step="30"
+              value={gameDuration}
+              onChange={(e) => setGameDuration(Number(e.target.value))}
+              className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer
+                       accent-gray-900"
+            />
+            <div className="flex justify-between text-xs text-gray-500 mt-1">
+              <span>1 min</span>
+              <span>5 min</span>
             </div>
           </div>
 

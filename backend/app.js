@@ -50,7 +50,7 @@ const games = new Map();
 // }
 
 const MAX_PLAYERS_PER_ROOM = 20;
-const GAME_DURATION = 60; // seconds
+const DEFAULT_GAME_DURATION = 60; // seconds
 
 /**
  * Create a new game
@@ -60,9 +60,10 @@ function createGame(options) {
   const game = {
     id,
     mode: options.mode || 'freeforall',
-    letters: generateLetters(options.letterCount || 14),
-    letterCount: options.letterCount || 14,
+    letters: generateLetters(options.letterCount || 15),
+    letterCount: options.letterCount || 15,
     minWordLength: options.minWordLength || 3,
+    duration: options.gameDuration || DEFAULT_GAME_DURATION,
     hostId: null,
     players: new Map(),
     claims: new Map(),
@@ -128,8 +129,8 @@ function getGameState(game, forPlayerId = null) {
     status: game.status,
     startTime: game.startTime,
     timeRemaining: game.startTime
-      ? Math.max(0, GAME_DURATION - Math.floor((Date.now() - game.startTime) / 1000))
-      : GAME_DURATION
+      ? Math.max(0, game.duration - Math.floor((Date.now() - game.startTime) / 1000))
+      : game.duration
   };
 }
 
@@ -143,7 +144,7 @@ function startGameTimer(game) {
   // Broadcast timer updates every second
   game.timerInterval = setInterval(() => {
     const elapsed = Math.floor((Date.now() - game.startTime) / 1000);
-    const remaining = Math.max(0, GAME_DURATION - elapsed);
+    const remaining = Math.max(0, game.duration - elapsed);
 
     io.to(game.id).emit('timer-update', { remaining });
 
