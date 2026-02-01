@@ -507,10 +507,17 @@ io.on('connection', (socket) => {
         if (player) {
           player.connected = false;
 
-          // Notify other players
+          // Notify other players with updated players list
+          const players = Array.from(game.players.entries()).map(([id, p]) => ({
+            id,
+            name: p.name,
+            score: p.score,
+            connected: p.connected
+          }));
           socket.to(gameId).emit('player-disconnected', {
             playerId: socket.id,
-            playerName: player.name
+            playerName: player.name,
+            players
           });
 
           console.log(`${player.name} disconnected from game ${gameId}`);

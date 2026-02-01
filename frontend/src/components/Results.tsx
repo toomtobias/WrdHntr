@@ -71,24 +71,6 @@ function Results() {
     return a.localeCompare(b, 'sv')
   })
 
-  // Determine tie-breaker reason for exclusive mode
-  const getTieBreakerReason = (player: Player, prevPlayer: Player | null): string | null => {
-    if (game.mode !== 'exclusive' || !prevPlayer) return null
-    if (player.score !== prevPlayer.score) return null
-    
-    // Same score - check which tie-breaker was used
-    if ((prevPlayer.longestWord ?? 0) > (player.longestWord ?? 0)) {
-      return 'längsta ord'
-    }
-    if ((prevPlayer.wordCount ?? 0) > (player.wordCount ?? 0)) {
-      return 'antal ord'
-    }
-    if ((prevPlayer.firstClaimTime ?? Infinity) < (player.firstClaimTime ?? Infinity)) {
-      return 'snabbast först'
-    }
-    return null
-  }
-
   // Calculate total bonus per player for free-for-all mode
   const bonusByPlayer = rankings.reduce((acc, player) => {
     const playerClaims = claimsByPlayer[player.id] || []
@@ -103,11 +85,7 @@ function Results() {
       <div className="bg-white rounded-lg p-6 mb-6 shadow-sm border border-gray-200">
         <h3 className="text-lg font-semibold text-gray-800 mb-4">Slutresultat</h3>
         <div className="space-y-2">
-          {rankings.map((player, index) => {
-            const prevPlayer = index > 0 ? rankings[index - 1] : null
-            const tieBreakerReason = getTieBreakerReason(player, prevPlayer)
-            
-            return (
+          {rankings.map((player, index) => (
               <div
                 key={player.id}
                 className={`flex items-center justify-between p-3 rounded-lg ${
@@ -143,18 +121,12 @@ function Results() {
                       +{bonusByPlayer[player.id]} bonus
                     </span>
                   )}
-                  {tieBreakerReason && (
-                    <span className="text-xs text-gray-500 italic">
-                      (via {tieBreakerReason})
-                    </span>
-                  )}
                 </div>
                 <div className="text-2xl font-bold text-gray-800">
                   {player.score}
                 </div>
               </div>
-            )
-          })}
+          ))}
         </div>
       </div>
 

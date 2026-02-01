@@ -108,8 +108,8 @@ function GameRoom() {
       updatePlayers(players)
     })
 
-    socket.on('player-disconnected', () => {
-      // Player marked as disconnected on server, players list will update via next event
+    socket.on('player-disconnected', ({ players }: { players: Player[] }) => {
+      updatePlayers(players)
     })
 
     socket.on('game-started', (gameState: GameState) => {
@@ -491,17 +491,14 @@ function GameRoom() {
                       alt=""
                       className="w-8 h-8 rounded-full bg-gray-100 flex-shrink-0"
                     />
-                    <div className="min-w-0">
-                      <div className="font-medium text-gray-800 flex items-center gap-2">
-                        <span className="truncate">{player.name}</span>
-                        {player.id === game.hostId && (
-                          <span className="text-xs bg-gray-200 text-gray-700 px-1.5 py-0.5 rounded flex-shrink-0">
-                            Värd
-                          </span>
-                        )}
-                      </div>
-                      {player.connected === false && (
-                        <span className="text-xs text-red-500">Frånkopplad</span>
+                    <div className="font-medium text-gray-800 flex items-center gap-2 min-w-0">
+                      <span className={`truncate ${player.connected === false ? 'line-through text-gray-400' : ''}`}>
+                        {player.name}
+                      </span>
+                      {player.id === game.hostId && (
+                        <span className="text-xs bg-gray-200 text-gray-700 px-1.5 py-0.5 rounded flex-shrink-0">
+                          Värd
+                        </span>
                       )}
                     </div>
                   </div>
