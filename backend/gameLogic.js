@@ -148,19 +148,19 @@ export function validateWord(word, letters, minLength = 3) {
  * Calculate score for a word in Free-for-all mode
  * @param {string} word - The word
  * @param {number} secondsElapsed - Seconds since game start
- * @returns {number} Score
+ * @param {number} gameDuration - Total game duration in seconds
+ * @returns {{ score: number, bonus: number }} Score and bonus
  */
-export function calculateFreeForAllScore(word, secondsElapsed) {
+export function calculateFreeForAllScore(word, secondsElapsed, gameDuration = 60) {
   const wordLength = word.length;
-  const timeBonus = Math.max(0, 60 - secondsElapsed);
-  let score = wordLength * timeBonus;
+  const timeRemaining = Math.max(0, gameDuration - secondsElapsed);
+  const baseScore = wordLength * timeRemaining;
 
-  // Bonus for longer words
-  if (wordLength > 6) {
-    score += 5;
-  }
+  // Bonus for longer words (5+ letters)
+  const bonus = wordLength >= 5 ? wordLength * 10 : 0;
+  const score = Math.round(baseScore + bonus);
 
-  return Math.round(score);
+  return { score, bonus };
 }
 
 /**

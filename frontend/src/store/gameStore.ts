@@ -18,6 +18,7 @@ export interface Claim {
   playerName: string
   timestamp: number
   score: number
+  bonus?: number
 }
 
 export interface GameState {

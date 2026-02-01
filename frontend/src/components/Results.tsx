@@ -89,6 +89,14 @@ function Results() {
     return null
   }
 
+  // Calculate total bonus per player for free-for-all mode
+  const bonusByPlayer = rankings.reduce((acc, player) => {
+    const playerClaims = claimsByPlayer[player.id] || []
+    const totalBonus = playerClaims.reduce((sum, claim) => sum + (claim.bonus || 0), 0)
+    acc[player.id] = totalBonus
+    return acc
+  }, {} as Record<string, number>)
+
   return (
     <div className="min-h-screen p-4 max-w-4xl mx-auto">
       {/* Final Rankings */}
@@ -130,6 +138,11 @@ function Results() {
                   <span className="text-xs bg-gray-200 text-gray-600 px-2 py-0.5 rounded-full">
                     {claimsByPlayer[player.id]?.reduce((sum, c) => sum + c.word.length, 0) || 0} bokstäver
                   </span>
+                  {game.mode === 'freeforall' && bonusByPlayer[player.id] > 0 && (
+                    <span className="text-xs bg-gray-200 text-gray-600 px-2 py-0.5 rounded-full">
+                      +{bonusByPlayer[player.id]} bonus
+                    </span>
+                  )}
                   {tieBreakerReason && (
                     <span className="text-xs text-gray-500 italic">
                       (via {tieBreakerReason})

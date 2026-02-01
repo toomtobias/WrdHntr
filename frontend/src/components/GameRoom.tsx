@@ -128,15 +128,16 @@ function GameRoom() {
       }
     })
 
-    socket.on('word-claimed', ({ word, playerId: claimerId, playerName: claimerName, score, timestamp, players }: {
+    socket.on('word-claimed', ({ word, playerId: claimerId, playerName: claimerName, score, bonus, timestamp, players }: {
       word: string
       playerId: string
       playerName: string
       score: number
+      bonus?: number
       timestamp: number
       players: Player[]
     }) => {
-      addClaim({ word, playerId: claimerId, playerName: claimerName, score, timestamp })
+      addClaim({ word, playerId: claimerId, playerName: claimerName, score, bonus, timestamp })
       updatePlayers(players)
     })
 
@@ -418,7 +419,7 @@ function GameRoom() {
               </p>
               <p className="text-gray-400 text-sm mb-4">
                 {game.mode === 'freeforall'
-                  ? 'Poäng = ordlängd × tid kvar (bonus +5 för ord över 6 bokstäver)'
+                  ? 'Poäng = ordlängd × tid kvar + bonus (5+ bokstäver = ordlängd × 10)'
                   : 'Poäng = 1 poäng per bokstav. Vid lika: längsta ord, antal ord, snabbast först.'}
               </p>
 

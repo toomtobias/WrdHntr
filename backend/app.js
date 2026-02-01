@@ -216,7 +216,8 @@ function endGame(game) {
       playerId: claim.playerId,
       playerName: claim.playerName,
       timestamp: claim.timestamp,
-      score: claim.score
+      score: claim.score,
+      bonus: claim.bonus || 0
     })),
     gameInfo: {
       mode: game.mode,
@@ -275,7 +276,7 @@ function submitWord(game, playerId, word) {
     }
 
     // Calculate and add score
-    const score = calculateFreeForAllScore(upperWord, elapsed);
+    const { score, bonus } = calculateFreeForAllScore(upperWord, elapsed, game.duration);
     game.playerClaims.get(playerId).add(upperWord);
 
     // Add to global claims list (multiple players can have same word)
@@ -285,11 +286,12 @@ function submitWord(game, playerId, word) {
       playerName: player.name,
       timestamp: elapsed,
       score,
+      bonus,
       word: upperWord
     });
     player.score += score;
 
-    return { success: true, word: upperWord, score, totalScore: player.score };
+    return { success: true, word: upperWord, score, bonus, totalScore: player.score };
   }
 }
 
@@ -447,6 +449,7 @@ io.on('connection', (socket) => {
           playerId: socket.id,
           playerName: socket.data.playerName,
           score: result.score,
+          bonus: result.bonus || 0,
           timestamp: Math.floor((Date.now() - game.startTime) / 1000),
           players: Array.from(game.players.entries()).map(([id, p]) => ({
             id,
