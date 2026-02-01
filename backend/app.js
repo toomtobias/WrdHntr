@@ -171,14 +171,40 @@ function endGame(game) {
 
   game.status = 'ended';
 
-  // Calculate final rankings
+  // Calculate extra statistics per player for tie-breakers
+  const playerStats = new Map();
+  for (const [playerId] of game.players) {
+    const playerClaims = Array.from(game.claims.entries())
+      .filter(([, claim]) => claim.playerId === playerId);
+
+    const longestWord = playerClaims.reduce((max, [word]) =>
+      word.length > max ? word.length : max, 0);
+    const wordCount = playerClaims.length;
+    const firstClaimTime = playerClaims.length > 0
+      ? Math.min(...playerClaims.map(([, c]) => c.timestamp))
+      : Infinity;
+
+    playerStats.set(playerId, { longestWord, wordCount, firstClaimTime });
+  }
+
+  // Calculate final rankings with tie-breakers for exclusive mode
   const rankings = Array.from(game.players.entries())
     .map(([id, player]) => ({
       id,
       name: player.name,
-      score: player.score
+      score: player.score,
+      ...playerStats.get(id)
     }))
-    .sort((a, b) => b.score - a.score);
+    .sort((a, b) => {
+      if (b.score !== a.score) return b.score - a.score;
+      if (game.mode === 'exclusive') {
+        // Tie-breakers: longest word, then word count, then first claim time
+        if (b.longestWord !== a.longestWord) return b.longestWord - a.longestWord;
+        if (b.wordCount !== a.wordCount) return b.wordCount - a.wordCount;
+        return a.firstClaimTime - b.firstClaimTime; // Lower time = better
+      }
+      return 0;
+    });
 
   // Find all possible words (this might take a moment for large word lists)
   const possibleWords = findPossibleWords(game.letters, game.minWordLength);

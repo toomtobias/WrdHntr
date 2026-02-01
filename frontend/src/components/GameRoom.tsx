@@ -419,7 +419,7 @@ function GameRoom() {
               <p className="text-gray-400 text-sm mb-4">
                 {game.mode === 'freeforall'
                   ? 'Poäng = ordlängd × tid kvar (bonus +5 för ord över 6 bokstäver)'
-                  : 'Poäng = 1 poäng per bokstav (endast första som tar ordet får poäng)'}
+                  : 'Poäng = 1 poäng per bokstav. Vid lika: längsta ord, antal ord, snabbast först.'}
               </p>
 
               {isHost ? (

@@ -71,49 +71,77 @@ function Results() {
     return a.localeCompare(b, 'sv')
   })
 
+  // Determine tie-breaker reason for exclusive mode
+  const getTieBreakerReason = (player: Player, prevPlayer: Player | null): string | null => {
+    if (game.mode !== 'exclusive' || !prevPlayer) return null
+    if (player.score !== prevPlayer.score) return null
+    
+    // Same score - check which tie-breaker was used
+    if ((prevPlayer.longestWord ?? 0) > (player.longestWord ?? 0)) {
+      return 'längsta ord'
+    }
+    if ((prevPlayer.wordCount ?? 0) > (player.wordCount ?? 0)) {
+      return 'antal ord'
+    }
+    if ((prevPlayer.firstClaimTime ?? Infinity) < (player.firstClaimTime ?? Infinity)) {
+      return 'snabbast först'
+    }
+    return null
+  }
+
   return (
     <div className="min-h-screen p-4 max-w-4xl mx-auto">
       {/* Final Rankings */}
       <div className="bg-white rounded-lg p-6 mb-6 shadow-sm border border-gray-200">
         <h3 className="text-lg font-semibold text-gray-800 mb-4">Slutresultat</h3>
         <div className="space-y-2">
-          {rankings.map((player, index) => (
-            <div
-              key={player.id}
-              className={`flex items-center justify-between p-3 rounded-lg ${
-                index === 0
-                  ? 'bg-gray-100 border border-gray-300'
-                  : 'bg-gray-50 border border-gray-100'
-              }`}
-            >
-              <div className="flex items-center gap-3">
-                <span className={`w-6 h-6 flex items-center justify-center rounded-full
-                               text-sm font-bold ${
-                  index === 0 ? 'bg-gray-900 text-white' :
-                  index === 1 ? 'bg-gray-600 text-white' :
-                  index === 2 ? 'bg-gray-400 text-white' :
-                  'bg-gray-200 text-gray-600'
-                }`}>
-                  {index + 1}
-                </span>
-                <img
-                  src={`https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(player.name)}`}
-                  alt=""
-                  className="w-8 h-8 rounded-full bg-gray-100"
-                />
-                <span className="font-semibold text-gray-800">{player.name}</span>
-                <span className="text-xs bg-gray-200 text-gray-600 px-2 py-0.5 rounded-full">
-                  {claimsByPlayer[player.id]?.length || 0} ord
-                </span>
-                <span className="text-xs bg-gray-200 text-gray-600 px-2 py-0.5 rounded-full">
-                  {claimsByPlayer[player.id]?.reduce((sum, c) => sum + c.word.length, 0) || 0} bokstäver
-                </span>
+          {rankings.map((player, index) => {
+            const prevPlayer = index > 0 ? rankings[index - 1] : null
+            const tieBreakerReason = getTieBreakerReason(player, prevPlayer)
+            
+            return (
+              <div
+                key={player.id}
+                className={`flex items-center justify-between p-3 rounded-lg ${
+                  index === 0
+                    ? 'bg-gray-100 border border-gray-300'
+                    : 'bg-gray-50 border border-gray-100'
+                }`}
+              >
+                <div className="flex items-center gap-3 flex-wrap">
+                  <span className={`w-6 h-6 flex items-center justify-center rounded-full
+                                 text-sm font-bold ${
+                    index === 0 ? 'bg-gray-900 text-white' :
+                    index === 1 ? 'bg-gray-600 text-white' :
+                    index === 2 ? 'bg-gray-400 text-white' :
+                    'bg-gray-200 text-gray-600'
+                  }`}>
+                    {index + 1}
+                  </span>
+                  <img
+                    src={`https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(player.name)}`}
+                    alt=""
+                    className="w-8 h-8 rounded-full bg-gray-100"
+                  />
+                  <span className="font-semibold text-gray-800">{player.name}</span>
+                  <span className="text-xs bg-gray-200 text-gray-600 px-2 py-0.5 rounded-full">
+                    {claimsByPlayer[player.id]?.length || 0} ord
+                  </span>
+                  <span className="text-xs bg-gray-200 text-gray-600 px-2 py-0.5 rounded-full">
+                    {claimsByPlayer[player.id]?.reduce((sum, c) => sum + c.word.length, 0) || 0} bokstäver
+                  </span>
+                  {tieBreakerReason && (
+                    <span className="text-xs text-gray-500 italic">
+                      (via {tieBreakerReason})
+                    </span>
+                  )}
+                </div>
+                <div className="text-2xl font-bold text-gray-800">
+                  {player.score}
+                </div>
               </div>
-              <div className="text-2xl font-bold text-gray-800">
-                {player.score}
-              </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       </div>
 

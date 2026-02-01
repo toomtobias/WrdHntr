@@ -6,6 +6,10 @@ export interface Player {
   name: string
   score: number
   connected?: boolean
+  // Tie-breaker fields (only present in rankings at game end)
+  longestWord?: number
+  wordCount?: number
+  firstClaimTime?: number
 }
 
 export interface Claim {
